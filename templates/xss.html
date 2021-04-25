@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>xss演示</title>
+</head>
+<body>
+    <h1>xss演示</h1>
+
+    <p style="color: deeppink">反射型</p>
+    <input name="inp" placeholder="请输入你的内容" />
+    <input type="button" value="提交输入内容" onclick="handleSubmit()">
+
+    <br />
+    <br />
+    <br />
+    <span>这里将显示服务端的内容(客户端给什么就返回什么 脚本script iframe等)</span>
+    <div id="xssContent"></div>
+
+    <p style="color: deeppink">存储型</p>
+    <input name="comment" placeholder="请输入你的评论内容" />
+    <input type="button" value="提交评论" onclick="handleSubmitComment()">
+
+    <div>
+        <h2>评论列表</h2>
+        <ul id="cmtList">
+
+        </ul>
+    </div>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+
+        $(function () {
+            // 获取评论列表
+            getComments()
+        })
+
+        function getComments() {
+            console.log('---get comments---')
+            $.ajax({
+                type:'get',
+                url: '/app/comments/',
+                success: function (res) {
+                    console.log(res)
+                    if (res && res.code === 0) {
+                        if (res.data.length) {
+                            let fragment = document.createDocumentFragment()
+                            res.data.forEach(item => {
+                                 const li = document.createElement('li')
+                                 {#li.innerText = item.content#}
+                                 li.innerHTML = item.content
+                                 fragment.appendChild(li)
+                            })
+                            $('#cmtList').html(fragment)
+                        }
+                    }
+                },
+                error: function (err) {
+                    console.log(err)
+                }
+            })
+        }
+
+        function handleSubmitComment() {
+            console.log('---submit comment---')
+            const comment = $.trim($("input[name='comment']").val())
+            if (!comment) return
+            $.ajax({
+                type:'POST',
+                url: '/app/comments/',
+                data: {
+                    comment,
+                },
+                success: function (res) {
+                    console.log(res)
+                    if (res && res.code === 0) {
+                        alert('评论成功')
+                        $("input[name='comment']").val('')
+                        getComments()
+                    }
+                },
+                error: function (err) {
+                    console.log(err)
+                }
+            })
+        }
+
+        function handleSubmit() {
+            const value = $("input[name='inp']").val()
+            if (!value) return
+            $.ajax({
+                type: 'POST',
+                url: '/app/xss/',
+                data: {
+                    inp: value
+                },
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data, 'data')
+                    if (data && data.result) {
+                        $('#xssContent').html(data.result)
+                    }
+                },
+                error: function (err) {
+                    console.log(err)
+                }
+            })
+        }
+    </script>
+</body>
+</html>
