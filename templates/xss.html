@@ -14,6 +14,9 @@
     <br />
     <br />
     <br />
+
+
+
     <span>这里将显示服务端的内容(客户端给什么就返回什么 脚本script iframe等)</span>
     <div id="xssContent"></div>
 
@@ -48,7 +51,6 @@
                             let fragment = document.createDocumentFragment()
                             res.data.forEach(item => {
                                  const li = document.createElement('li')
-                                 {#li.innerText = item.content#}
                                  li.innerHTML = item.content
                                  fragment.appendChild(li)
                             })
@@ -96,10 +98,9 @@
                     inp: value
                 },
                 dataType: 'json',
-                success: function (data) {
-                    console.log(data, 'data')
-                    if (data && data.result) {
-                        $('#xssContent').html(data.result)
+                success: function (res) {
+                    if (res && res.result) {
+                        $('#xssContent').html(res.result)
                     }
                 },
                 error: function (err) {

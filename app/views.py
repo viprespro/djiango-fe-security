@@ -5,23 +5,46 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
 # Create your views here.
-from app.models import Comments
+from app.models import Comments, User
 
 
 def index(request):
     return HttpResponse('hello world!')
 
 
-def login(request):
+def register(request):
     if request.method == 'POST':
-        ret = {}
         username = request.POST.get('username')
         password = request.POST.get('password')
-        ret['username'] = username
-        ret['password'] = password
-        ret = json.dumps(ret)
-        # return HttpResponse('用户名：' + username + '<br />' + '密码：' + password)
-        return HttpResponse(ret, content_type='application/json;charset=utf-8')
+        age = request.POST.get('age')
+        try:
+            User.objects.get(username=username)
+            # return JsonResponse({'code': 1, 'msg': '用户已存在'})
+            return HttpResponse('用户已存在！')
+        except User.DoesNotExist:
+            u = User()
+            u.username = username
+            u.password = password
+            u.age = age
+            u.save()
+            # return JsonResponse({'code': 0, 'msg': '注册成功'})
+            return HttpResponse('注册成功！')
+    else:
+        return render(request, 'register.html')
+
+
+def login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        try:
+            user = User.objects.get(username=username)
+            if user.password == password:
+                return HttpResponse('登录成功！')
+            else:
+                return HttpResponse('用户名或密码不正确！')
+        except User.DoesNotExist:
+            return HttpResponse('用户名不存在')
     else:
         return render(request, 'login.html')
 
