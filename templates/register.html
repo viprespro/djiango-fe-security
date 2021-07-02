@@ -5,18 +5,63 @@
     <title>注册</title>
 </head>
 <body>
-    <h1>注册</h1>
-    <form action="/app/register/" method="post">
-        <label>用户名：</label><input name="username"  placeholder="请输入注册用户名" />
-        <br />
-        <br />
-        <label>密码：</label><input name="password" placeholder="请输入登录密码" />
-        <br />
-        <br />
-        <label>年龄：</label><input name="age" placeholder="请输入你的年龄" />
-        <br />
-        <br />
-        <input type="submit" value="注册">
-    </form>
+<h1>注册</h1>
+<label>用户名：</label><input name="username" placeholder="请输入注册用户名"/>
+<br/>
+<br/>
+<label>密码：</label><input name="password" placeholder="请输入登录密码"/>
+<br/>
+<br/>
+<label>年龄：</label><input name="age" placeholder="请输入你的年龄"/>
+<br/>
+<br/>
+<button type="button"  onclick="handleRegister()">注册</button>
+<button type="button"  onclick="location.href='/app/login'">有账号？去登录</button>
+<button type="button"  onclick="location.href='/app/xss'">查看xss演示案例</button>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+
+    function getValue(arg) {
+        return $(`input[name=${arg}]`).val()
+    }
+
+    function clearInput() {
+       Array.from($('input')).forEach(item => {
+           item.value = ''
+       })
+    }
+
+    function handleRegister() {
+        const username = getValue('username'),
+            password = getValue('password'),
+            age = getValue('age')
+        if (!username || !password || !age) {
+            return alert('请填写表单完整')
+        }
+        $.ajax({
+            type: 'post',
+            url: '/app/register/',
+            data: {
+                username, password, age
+            },
+            success: function (res) {
+                console.log(res)
+                if (res) {
+                   if (!res.code) {
+                       if (confirm('注册成功')) {
+                           clearInput()
+                           location.href = '/app/login'
+                       }
+                   } else  {
+                       alert(res.msg)
+                       clearInput()
+                   }
+                }
+            },
+        })
+
+    }
+</script>
 </body>
 </html>

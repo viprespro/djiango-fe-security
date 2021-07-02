@@ -3,17 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>登录</title>
+    <style>
+        .register {
+            margin-top: 15px;
+        }
+    </style>
 </head>
 <body>
-    <h1>登录</h1>
-    <form action="/app/login/" method="post">
-        <label>用户名：</label><input name="username"  />
-        <br />
-        <br />
-        <label>密码：</label><input name="password" /> <br />
-        <br />
-        <br />
-        <input type="submit" value="登录">
-    </form>
+<h1>登录</h1>
+<form action="/app/login/" method="post">
+    <label>用户名：</label><input name="username"/>
+    <br/>
+    <br/>
+    <label>密码：</label><input name="password"/> <br/>
+    <br/>
+    <br/>
+    <input type="submit" value="登录">
+</form>
+<input class="register" type="button" value="没有账号？去注册" onclick="location.href='/app/register'"/>
+<button type="button" onclick="location.href='/app/xss'">查看xss演示案例</button>
 </body>
 </html>

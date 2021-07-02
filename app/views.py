@@ -19,16 +19,16 @@ def register(request):
         age = request.POST.get('age')
         try:
             User.objects.get(username=username)
-            # return JsonResponse({'code': 1, 'msg': '用户已存在'})
-            return HttpResponse('用户已存在！')
+            return JsonResponse({'code': 1, 'msg': '用户已存在'})
+            # return HttpResponse('用户已存在！')
         except User.DoesNotExist:
             u = User()
             u.username = username
             u.password = password
             u.age = age
             u.save()
-            # return JsonResponse({'code': 0, 'msg': '注册成功'})
-            return HttpResponse('注册成功！')
+            return JsonResponse({'code': 0, 'msg': '注册成功'})
+            # return HttpResponse('注册成功！')
     else:
         return render(request, 'register.html')
 
